@@ -1,0 +1,60 @@
+<div class="register-container">
+  <div class="register-card">
+    <h2 class="register-title">Inscription</h2>
+    
+    <form (ngSubmit)="onRegister()" #registerForm="ngForm" class="register-form">
+      <div class="form-group">
+        <input
+          type="text"
+          placeholder="Nom d'utilisateur"
+          [(ngModel)]="user.username"
+          name="username"
+          required
+          #username="ngModel"
+          class="form-input"
+        />
+        <div *ngIf="username.invalid && username.touched" class="error-message">
+          <i class="fas fa-exclamation-circle"></i> Le nom d'utilisateur est requis.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input
+          type="password"
+          placeholder="Mot de passe"
+          [(ngModel)]="user.password"
+          name="password"
+          required
+          #password="ngModel"
+          class="form-input"
+        />
+        <div *ngIf="password.invalid && password.touched" class="error-message">
+          <i class="fas fa-exclamation-circle"></i> Le mot de passe est requis.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="select-label">Rôle</label>
+        <select
+          [(ngModel)]="selectedRole"
+          name="roleName"
+          required
+          #roleName="ngModel"
+          class="form-select"
+          (ngModelChange)="updateRoles()"
+        >
+          <option value="" disabled selected>Choisissez un rôle</option>
+          <option value="USER">Utilisateur</option>
+          <option value="ADMIN">Administrateur</option>
+        </select>
+        <div *ngIf="roleName.invalid && roleName.touched" class="error-message">
+          <i class="fas fa-exclamation-circle"></i> Le rôle est requis.
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="registerForm.invalid" class="submit-btn">
+        S'inscrire
+      </button>
+    </form>
+  </div>
+</div>

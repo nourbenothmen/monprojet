@@ -1,0 +1,72 @@
+<div class="modal-body">
+  <div *ngIf="!isDataLoaded" class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p>Chargement des données...</p>
+  </div>
+
+  <form *ngIf="isDataLoaded" (ngSubmit)="saveReglement()">
+    <div class="mb-3">
+      <label for="factureId" class="form-label">Facture</label>
+      <select class="form-select" id="factureId" 
+              [(ngModel)]="reglement.factureId" 
+              (change)="updateFactureDetails()"
+              name="factureId"
+              required>
+        <option [ngValue]="0" disabled>Sélectionner une facture</option>
+        <option *ngFor="let facture of factures" [ngValue]="facture.id">
+          {{ facture.id }} - {{ facture.client?.name || 'Client inconnu' }} (Restant: {{ facture.resteAPayer }} {{ getDeviseSymbol(facture.deviseId) }})
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="montant" class="form-label">Montant</label>
+      <div class="input-group">
+        <input type="number" class="form-control" id="montant" 
+               [(ngModel)]="reglement.montant" 
+               name="montant" 
+               min="0.01" 
+               step="0.01"
+               (change)="calculateMontant()"
+               required>
+        <span class="input-group-text">{{ getDeviseSymbol(reglement.deviseId) }}</span>
+      </div>
+      <small *ngIf="montantConvertiDT > 0">Équivalent en DT: {{ montantConvertiDT.toFixed(2) }} DT</small>
+    </div>
+
+    <div class="mb-3">
+      <label for="modePaiement" class="form-label">Mode de paiement</label>
+      <select class="form-select" id="modePaiement" 
+              [(ngModel)]="reglement.modePaiement" 
+              name="modePaiement"
+              required>
+        <option *ngFor="let mode of modePaiementOptions" [ngValue]="mode">
+          {{ mode }}
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="deviseId" class="form-label">Devise</label>
+      <select class="form-select" id="deviseId" 
+              [(ngModel)]="reglement.deviseId" 
+              name="deviseId" 
+              (change)="calculateMontant()"
+              required>
+        <option [ngValue]="0">Sélectionner une devise</option>
+        <option *ngFor="let devise of devises" [ngValue]="devise.id">
+          {{ devise.nom }} ({{ devise.symbole }})
+        </option>
+      </select>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Annuler</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!isFormValid()">
+        Sauvegarder
+      </button>
+    </div>
+  </form>
+</div>

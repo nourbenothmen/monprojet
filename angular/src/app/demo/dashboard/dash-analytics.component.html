@@ -1,0 +1,290 @@
+<div class="container mt-5">
+  <h2 class="text-center">Tableau de Bord Analytique</h2>
+  <br>
+
+  <!-- Section des cartes disposées horizontalement -->
+  <div class="row g-4 mb-4">
+    <!-- Carte pour le total des clients -->
+    <div class="col-md-3">
+      <div class="card bg-c-blue text-white mb-4">
+        <div class="card-body">
+          <i class="fas fa-users icon-custom float-end fa-2x" style="color: #ff6f61;"></i>
+          <h6 class="text-white">Total Clients</h6>
+          <h2 class="mb-0">{{ totalClients }}</h2>
+          <p>Nombre total de clients</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carte pour le total des produits -->
+    <div class="col-md-3">
+      <div class="card bg-c-green text-white mb-4">
+        <div class="card-body">
+          <i class="fas fa-gift icon-custom float-end fa-2x" style="color: #4caf50;"></i>
+          <h6 class="text-white">Total Produits</h6>
+          <h2 class="mb-0">{{ totalProduits }}</h2>
+          <p>Nombre total de produits</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nouvelle carte pour le reste global -->
+    <div class="col-md-3">
+      <div class="card bg-c-purple text-white mb-4">
+        <div class="card-body">
+          <i class="fas fa-coins icon-custom float-end fa-2x" style="color: #ffca28;"></i>
+          <h6 class="text-white">Reste Global Non Payé</h6>
+          <h2 class="mb-0">{{ totalRemainingAmount }} DT</h2>
+          <p>Montant restant à régler</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graphique circulaire -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h4><i class="fas fa-donut-ring icon-custom me-2" style="color: #e91e63;"></i>Statut des Factures</h4>
+      <apx-chart [series]="pie1CAC.series" [chart]="pie1CAC.chart" [labels]="pie1CAC.labels"
+        [dataLabels]="pie1CAC.dataLabels" [colors]="pie1CAC.colors" [legend]="pie1CAC.legend"
+        [responsive]="pie1CAC.responsive"></apx-chart>
+    </div>
+  </div>
+
+  <!-- Sélection de l'année -->
+  <div class="mb-4">
+    <label for="yearSelect" class="form-label"><i class="fas fa-calendar-days icon-custom me-2" style="color: #3f51b5;"></i>Sélectionner une année :</label>
+    <select id="yearSelect" class="form-select" (change)="onYearChange($event)" [(ngModel)]="selectedYear">
+      <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+    </select>
+  </div>
+
+  <!-- Graphique en barres -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h4><i class="fas fa-chart-line icon-custom me-2" style="color: #9c27b0;"></i>Chiffre d’Affaires par Année</h4>
+      <apx-chart [series]="bar1CAC.series" [chart]="bar1CAC.chart" [plotOptions]="bar1CAC.plotOptions"
+        [dataLabels]="bar1CAC.dataLabels" [stroke]="bar1CAC.stroke" [colors]="bar1CAC.colors" [xaxis]="bar1CAC.xaxis"
+        [yaxis]="bar1CAC.yaxis" [fill]="bar1CAC.fill" [tooltip]="bar1CAC.tooltip"></apx-chart>
+    </div>
+  </div>
+
+  <!-- Tableau des clients les plus fidèles -->
+  <div class="col-xl-12">
+    
+    <app-card cardTitle="Les clients les plus fidèles" [options]="false" blockClass="table-border-style">
+      <i class='fas fa-crown icon-custom me-2' style='color: #ffd700;'></i>
+      <div class="table-responsive">
+        <table class="table table-styling">
+          <thead>
+            <tr class="table-primary">
+              <th>#</th>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Nombre de Factures</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let client of loyalClients; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{client.nom }}</td>
+              <td>{{ client.email }}</td>
+              <td>{{ client.factureCount }}</td>
+            </tr>
+            <tr *ngIf="loyalClients.length === 0">
+              <td colspan="4" class="text-center">Aucun client fidèle trouvé pour cette année.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+
+  <div class="col-xl-12">
+    
+    <app-card cardTitle="Produits les plus demandés" [options]="false" blockClass="table-border-style">
+      <i class='fas fa-bolt icon-custom me-2' style='color: #ff9800;'></i>
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <label for="productLimit" class="form-label">Nombre de produits à afficher</label>
+          <select id="productLimit" class="form-select" [(ngModel)]="selectedProductLimit"
+            (change)="onProductLimitChange()">
+            <option *ngFor="let limit of productLimitOptions" [value]="limit">{{ limit }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div *ngIf="isLoadingProducts" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoadingProducts" class="table-responsive">
+        <table class="table table-xl">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nom</th>
+              <th>Catégorie</th>
+              <th>Prix unitaire</th>
+              <th>Quantité vendue</th>
+              <th>Chiffre d'affaires</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of mostRequestedProducts; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ product.name }}</td>
+              <td>{{ product.category }}</td>
+              <td>{{ product.price | currency:'TND':'symbol':'1.2-2' }}</td>
+              <td>{{ product.quantitySold }}</td>
+              <td>{{ (product.price * product.quantitySold) | currency:'TND':'symbol':'1.2-2' }}</td>
+            </tr>
+            <tr *ngIf="mostRequestedProducts.length === 0">
+              <td colspan="6" class="text-center">Aucun produit trouvé</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+  <div class="col-xl-12">
+    
+    <app-card cardTitle="Produits les plus vendus par année" [options]="false" blockClass="table-border-style">
+      <i class='fas fa-medal icon-custom me-2' style='color: #2196f3;'></i>
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <label class="form-label">Année</label>
+          <select class="form-select" (change)="onYearChange($event)">
+            <option *ngFor="let year of years" [value]="year" [selected]="year === selectedYear">
+              {{ year }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Nombre de produits</label>
+          <select class="form-select" [(ngModel)]="selectedBestSellingLimit" (change)="loadBestSellingProducts()">
+            <option *ngFor="let limit of productLimitOptions" [value]="limit">
+              {{ limit }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-styling">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nom du produit</th>
+              <th>Catégorie</th>
+              <th>Quantité vendue</th>
+              <th>Prix unitaire</th>
+              <th>Chiffre d'affaires</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of bestSellingProducts; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ product.name }}</td>
+              <td>{{ product.category }}</td>
+              <td>{{ product.quantitySold }}</td>
+              <td>{{ product.price | currency:'TND':'symbol':'1.2-2' }}</td>
+              <td>{{ (product.price * product.quantitySold) | currency:'TND':'symbol':'1.2-2' }}</td>
+            </tr>
+            <tr *ngIf="isLoadingBestSellers">
+              <td colspan="6" class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="!isLoadingBestSellers && bestSellingProducts.length === 0">
+              <td colspan="6" class="text-center">Aucun produit trouvé</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+  <!-- Tableau des dettes par client -->
+  <div class="col-xl-12">
+    
+    <app-card cardTitle="Dettes par Client" [options]="false" blockClass="table-border-style">
+      <i class='fas fa-bell icon-custom me-2' style='color: #f44336;'></i>
+      <div class="table-responsive">
+        <table class="table table-styling">
+          <thead>
+            <tr class="table-primary">
+              <th>#</th>
+              <th>ID Client</th>
+              <th>Dette Totale (DT)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let debt of debtsByClient | keyvalue; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ debt.key }}</td>
+              <td>{{ debt.value }}</td>
+            </tr>
+            <tr *ngIf="debtsByClient.size === 0">
+              <td colspan="3" class="text-center">Aucune dette trouvée.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+
+  <div class="col-xl-12">
+    <app-card cardTitle="Produits en Rupture de Stock" [options]="false" blockClass="table-border-style">
+      <i class='fas fa-exclamation-triangle icon-custom me-2' style='color: #ff5722;'></i>
+      <!-- Sélecteur d'année -->
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <label class="form-label">Année</label>
+          <select class="form-select" (change)="onYearChange($event)">
+            <option *ngFor="let year of years" [value]="year" [selected]="year === selectedYear">
+              {{ year }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tableau des produits -->
+      <div class="table-responsive">
+        <table class="table table-styling">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom</th>
+              <th>Prix (TND)</th>
+              <th>Catégorie</th>
+              <th>Quantité</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="isLoadingOutOfStock">
+              <td colspan="5" class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </td>
+            </tr>
+            <tr *ngFor="let product of outOfStockProducts">
+              <td>{{ product.id }}</td>
+              <td>{{ product.name }}</td>
+              <td>{{ product.price | number:'1.2-2' }}</td>
+              <td>{{ product.category }}</td>
+              <td class="text-danger">{{ product.quantity }} (Rupture)</td>
+            </tr>
+            <tr *ngIf="!isLoadingOutOfStock && outOfStockProducts.length === 0">
+              <td colspan="5" class="text-center">Aucun produit en rupture de stock</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+</div>

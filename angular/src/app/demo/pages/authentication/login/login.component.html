@@ -1,0 +1,54 @@
+<div class="login-container">
+  <div class="login-card">
+    <h2 class="login-title">Connexion</h2>
+
+    <!-- Message d’erreur avec classe dynamique selon le type -->
+    <div *ngIf="errorMessage" 
+         [ngClass]="{
+           'error-admin': errorType === 'admin',
+           'error-credentials': errorType === 'credentials',
+           'error-other': errorType === 'other'
+         }" 
+         class="global-error-message">
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login-form">
+      <!-- Champ utilisateur -->
+      <div class="form-group">
+        <input
+          type="text"
+          placeholder="Nom d'utilisateur"
+          [(ngModel)]="username"
+          name="username"
+          required
+          #usernameField="ngModel"
+          class="form-input"
+        />
+        <div *ngIf="usernameField.invalid && usernameField.touched" class="error-message">
+          <i class="fas fa-exclamation-circle"></i> Le nom d'utilisateur est requis.
+        </div>
+      </div>
+
+      <!-- Champ mot de passe -->
+      <div class="form-group">
+        <input
+          type="password"
+          placeholder="Mot de passe"
+          [(ngModel)]="password"
+          name="password"
+          required
+          #passwordField="ngModel"
+          class="form-input"
+        />
+        <div *ngIf="passwordField.invalid && passwordField.touched" class="error-message">
+          <i class="fas fa-exclamation-circle"></i> Le mot de passe est requis.
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="loginForm.invalid" class="submit-btn">
+        Se connecter
+      </button>
+    </form>
+  </div>
+</div>

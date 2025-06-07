@@ -1,0 +1,95 @@
+<div class="row">
+  <div class="col-xl-12">
+    <app-card cardTitle="Liste des Factures" [options]="false" blockClass="table-border-style">
+      <div class="mb-3">
+        <button class="btn btn-primary" (click)="openAddModal()" [disabled]="!isDataLoaded">
+          <i class="fa fa-plus"></i> Créer une facture
+        </button>
+        <div class="float-end">
+          <select class="form-select" style="width: 250px;" [(ngModel)]="selectedClientId" (change)="filterByClient()">
+            <option [value]="null">Tous les clients</option>
+            <option *ngFor="let client of clients" [value]="client.id">
+              {{ client.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div *ngIf="!isDataLoaded" class="text-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <p>Chargement des données...</p>
+      </div>
+
+      <div class="table-responsive" *ngIf="isDataLoaded">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Date</th>
+              <th>Client</th>
+              <th>Total</th>
+              <th>Détails</th>
+              <th>Montant Restant</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (facture of factures; track facture.id) {
+            <tr>
+              <th scope="row">{{ facture.id }}</th>
+              <td>{{ facture.dateFacture | date:'dd/MM/yyyy' }}</td>
+              <td>{{ facture.client?.name || 'Client inconnu' }}</td>
+              <td>{{ facture.total | currency:getDeviseSymbol(facture.deviseId) }}</td>
+              <td>
+                <ul class="list-unstyled">
+                  @for (ligne of facture.factureLignes; track ligne.id) {
+                  <li>
+                    {{ ligne.quantity }} x {{ ligne.produit?.name || 'Produit supprimé' }} ({{ ligne.price |
+                    currency:getDeviseSymbol(facture.deviseId) }})
+                  </li>
+                  }
+                </ul>
+              </td>
+              <td [title]="facture.resteAPayer == null ? 'Montant restant non défini' : ''">
+                {{ (facture.resteAPayer ?? 0) | currency:getDeviseSymbol(facture.deviseId) }}
+                <span *ngIf="facture.resteAPayer === null || facture.resteAPayer === undefined"
+                  style="color: red;">
+                  (Debug: Null/Undefined)
+                </span>
+              </td>
+              <td>
+                <span *ngIf="getStatusLabel(facture.status) === 'regle'"
+                  class="badge m-r-5 badge-pill bg-success">Réglée</span>
+                <span *ngIf="getStatusLabel(facture.status) === 'non_regle'"
+                  class="badge m-r-5 badge-pill bg-danger">Non réglée</span>
+                <span *ngIf="getStatusLabel(facture.status) === 'other'" class="badge m-r-5 badge-pill bg-secondary">
+                  {{ facture.status }}
+                </span>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditModal(facture)">
+                  <i class="fa fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-success me-2" (click)="openAddReglementModal(facture)">
+                  <i class="fa fa-money-bill"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(facture.id!)">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            }
+            @if (factures.length === 0) {
+            <tr>
+              <td colspan="8" class="text-center">Aucune facture trouvée</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+</div>

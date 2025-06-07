@@ -1,0 +1,50 @@
+<div class="row">
+  <div class="col-xl-12">
+    <app-card cardTitle="Liste des Devises" [options]="false" blockClass="table-border-style">
+
+      <div class="mb-3">
+        <button class="btn btn-primary" (click)="openAddModal()">
+          <i class="fa fa-plus"></i> Ajouter une devise
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Code</th>
+              <th>Nom</th>
+              <th>Taux de change</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (devise of devises; track devise.id) {
+              <tr>
+                <th scope="row">{{ devise.id }}</th>
+                <td>{{ devise.code }}</td>
+                <td>{{ devise.nom }}</td>
+                <td>{{ devise.tauxChange || '-' }}</td>
+                <td>
+                  
+                  <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditModal(devise)">
+                    <i class="fa fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(devise.id)">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (devises.length === 0) {
+              <tr>
+                <td colspan="5" class="text-center">Aucune devise trouvée</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+</div>

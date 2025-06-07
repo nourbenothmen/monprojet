@@ -1,0 +1,58 @@
+<div class="row">
+  <div class="col-xl-12">
+    <app-card cardTitle="Liste des Produits" [options]="false" blockClass="table-border-style">
+
+      <div class="mb-3">
+        <button class="btn btn-primary" (click)="openAddModal()">
+          <i class="fa fa-plus"></i> Ajouter un produit
+        </button>
+        <div class="float-end">
+          <select class="form-select" style="width: 200px; display: inline-block;" 
+                  [(ngModel)]="selectedCategory" (change)="filterByCategory()">
+            <option value="">Toutes les catégories</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{cat}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nom</th>
+              <th>Prix</th>
+              <th>Quantité</th>
+              <th>Catégorie</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (produit of filteredProduits; track produit.id) {
+              <tr>
+                <th scope="row">{{ produit.id }}</th>
+                <td>{{ produit.name }}</td>
+                <td>{{ produit.price | currency:'EUR':'symbol':'1.2-2' }}</td>
+                <td>{{ produit.quantity }}</td>
+                <td>{{ produit.category }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditModal(produit)">
+                    <i class="fa fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(produit.id ?? undefined)">
+                    <i class="fa fa-trash"></i>
+                </button>
+                </td>
+              </tr>
+            }
+            @if (filteredProduits.length === 0) {
+              <tr>
+                <td colspan="6" class="text-center">Aucun produit trouvé</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+</div>

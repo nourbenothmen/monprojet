@@ -1,0 +1,29 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ isEdit ? 'Edit' : 'Add' }} Devise</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  <form (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="code" class="form-label">Code</label>
+      <input type="text" class="form-control" id="code" [(ngModel)]="devise.code" name="code" required>
+    </div>
+    <div class="mb-3">
+      <label for="nom" class="form-label">Nom</label>
+      <input type="text" class="form-control" id="nom" [(ngModel)]="devise.nom" name="nom" required>
+    </div>
+    <div class="mb-3">
+      <label for="symbole" class="form-label">Symbole</label>
+      <input type="text" class="form-control" id="symbole" [(ngModel)]="devise.symbole" name="symbole" required>
+    </div>
+    <div class="mb-3">
+      <label for="taux" class="form-label">Taux</label>
+      <input type="number" class="form-control" id="taux" [(ngModel)]="devise.tauxChange" name="taux" required>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">Cancel</button>
+      <button type="submit" class="btn btn-primary">{{ isEdit ? 'Update' : 'Save' }}</button>
+    </div>
+  </form>
+</div>

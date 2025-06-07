@@ -1,0 +1,66 @@
+<div class="row">
+  <div class="col-xl-12">
+    <app-card cardTitle="Liste des Règlements" [options]="false" blockClass="table-border-style">
+      <div class="mb-3">
+        <button class="btn btn-primary" (click)="openAddModal()" [disabled]="!isDataLoaded">
+          <i class="fa fa-plus"></i> Ajouter un règlement
+        </button>
+        <div class="float-end">
+          <select class="form-select" style="width: 220px; display: inline-block;"
+                  [(ngModel)]="modePaiementFilter" (change)="filterByModePaiement()">
+            <option value="">Tous les modes de paiement</option>
+            <option *ngFor="let mode of modePaiementOptions" [value]="mode">{{ mode }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div *ngIf="!isDataLoaded" class="text-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <p>Chargement des données...</p>
+      </div>
+
+      <div class="table-responsive" *ngIf="isDataLoaded">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Montant</th>
+              <th>Date</th>
+              <th>Facture</th>
+              <th>Mode de Paiement</th>
+              <th>Devise</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (reglement of filteredReglements; track reglement.id) {
+              <tr>
+                <th scope="row">{{ reglement.id }}</th>
+                <td>{{ reglement.montant | currency:getDeviseSymbol(reglement.deviseId) }}</td>
+                <td>{{ reglement.dateReglement | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ getFactureInfo(reglement.factureId) }}</td>
+                <td>{{ reglement.modePaiement }}</td>
+                <td>{{ getDeviseSymbol(reglement.deviseId) }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditModal(reglement)">
+                    <i class="fa fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(reglement.id!)">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (filteredReglements.length === 0) {
+              <tr>
+                <td colspan="7" class="text-center">Aucun règlement trouvé</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+</div>

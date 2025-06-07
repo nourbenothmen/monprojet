@@ -1,0 +1,68 @@
+<div class="row">
+  <div class="col-xl-12">
+    <app-card cardTitle="Liste des Factures" [options]="false" blockClass="table-border-style">
+
+      <div class="mb-3">
+        <button class="btn btn-primary" (click)="openAddModal()">
+          <i class="fa fa-plus"></i> Créer une facture
+        </button>
+        <div class="float-end">
+          <select class="form-select" style="width: 250px;" 
+                  [(ngModel)]="selectedClientId" (change)="filterByClient()">
+            <option [value]="null">Tous les clients</option>
+            <option *ngFor="let client of clients" [value]="client.id">
+              {{ client.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Client</th>
+              <th>Total</th>
+              <th>Détails</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (facture of factures; track facture.id) {
+              <tr>
+                <th scope="row">{{ facture.id }}</th>
+                <td>{{ facture.dateFacture | date:'dd/MM/yyyy' }}</td>
+                <td>{{ facture.client?.name || 'Client inconnu' }}</td>
+                <td>{{ calculateTotal(facture.factureLignes) | currency:'':'symbol':'1.2-2' }} TND</td>
+                <td>
+                  <ul class="list-unstyled">
+                    @for (ligne of facture.factureLignes; track ligne.id) {
+                      <li>
+                        {{ ligne.quantity }} x {{ ligne.produit?.name || 'Produit supprimé' }} ({{ ligne.price | currency:'':'symbol':'1.2-2' }} TND)
+                    </li>
+                    }
+                  </ul>
+                </td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditModal(facture)">
+                    <i class="fa fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(facture.id!)">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (factures.length === 0) {
+              <tr>
+                <td colspan="6" class="text-center">Aucune facture trouvée</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+</div>

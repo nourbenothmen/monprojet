@@ -1,0 +1,173 @@
+/* Conteneur principal centré */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #e3f2fd; /* Bleu clair */
+  padding: 1rem;
+}
+
+/* Carte du formulaire */
+.login-card {
+  background: #ffffff;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(30, 144, 255, 0.2); /* ombre bleue */
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+}
+
+/* Titre */
+.login-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  font-size: 2rem;
+  color: #1565c0; /* Bleu foncé */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Message d’erreur global */
+.global-error-message {
+  background: #ffebee; /* fond rouge clair */
+  color: #b71c1c; /* texte rouge foncé */
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(183, 28, 28, 0.3);
+  position: relative;
+  animation: fadeInDown 0.5s ease forwards;
+}
+
+.global-error-message::before {
+  content: "⚠️";
+  margin-right: 0.6rem;
+  font-size: 1.3rem;
+  vertical-align: middle;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Formulaire */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Groupe champ */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Input */
+.form-input {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #90caf9; /* bleu clair */
+  border-radius: 8px;
+  outline-offset: 2px;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  border-color: #1565c0; /* bleu foncé */
+  box-shadow: 0 0 6px rgba(21, 101, 192, 0.5);
+}
+
+/* Message d’erreur sous input */
+.error-message {
+  color: #b71c1c; /* rouge foncé */
+  margin-top: 0.3rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Icône erreur dans message */
+.error-message i {
+  color: #b71c1c; /* rouge foncé */
+  font-size: 1.1rem;
+}
+
+/* Bouton submit */
+.submit-btn {
+  background: #1976d2; /* bleu vif */
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #0d47a1; /* bleu plus foncé */
+}
+
+.submit-btn:disabled {
+  background: #90caf9; /* bleu clair */
+  cursor: not-allowed;
+}
+.global-error-message {
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  position: relative;
+  animation: fadeInDown 0.5s ease forwards;
+  color: white;
+}
+
+/* Rouge foncé pour accès admin interdit */
+.error-admin {
+  background: #b71c1c; /* rouge foncé */
+}
+
+/* Orange vif pour mauvais identifiants */
+.error-credentials {
+  background: #0a8a2a; /* orange */
+}
+
+/* Gris neutre pour autres erreurs */
+.error-other {
+  background: #616161; /* gris foncé */
+}
+
+/* Animation (optionnelle) */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
