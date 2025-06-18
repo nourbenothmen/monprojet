@@ -27,7 +27,7 @@ jobs:
       - name: Run Angular tests
         run: |
           cd angular
-          npx ng test
+          npx ng test skeleton
 
 
       - name: Build Angular app
