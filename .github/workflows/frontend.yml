@@ -27,7 +27,7 @@ jobs:
       - name: Run Angular tests
         run: |
           cd angular
-          npx ng test --watch=false --browsers=ChromeHeadless
+          npx ng test
 
 
       - name: Build Angular app
