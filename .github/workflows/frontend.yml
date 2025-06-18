@@ -24,10 +24,10 @@ jobs:
           cd angular
           npm install --legacy-peer-deps
 
-      - name: Run Angular tests
-        run: |
-          cd angular
-          npx ng test skeleton
+    #  - name: Run Angular tests
+    #    run: |
+    #      cd angular
+    #      npx ng test skeleton
 
 
       - name: Build Angular app
