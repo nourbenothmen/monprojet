@@ -1,9 +1,3 @@
-name: Frontend Angular CI
-
-on:
-  push:
-    branches: [ master ]  # ou 'main' selon ta branche
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,7 +14,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd angular
-          npm install
+          npm install --legacy-peer-deps
 
       - name: Run Angular tests
         run: |
