@@ -5,9 +5,19 @@ import { catchError, of } from 'rxjs';
 import { Facture } from '../../models/facture.modal';
 import { Produit } from '../../models/produit.modal';
 
+
+export interface ClientDebt {
+  clientId: number;
+  name: string;
+  email: string;
+  telephone: string; // Correspond à telephone converti en string
+  debtAmount: number;
+}
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class FactureService {
   private baseURL = 'http://localhost:8083/api/factures'; // Remplacez par l'URL de votre backend
 
@@ -69,7 +79,7 @@ export class FactureService {
     );
   }
 
-
+/*
 getDebtsByClient(): Observable<Map<number, number>> {
     return this.http.get<Map<number, number>>(`${this.baseURL}/debts-by-client`).pipe(
       catchError(error => {
@@ -77,7 +87,19 @@ getDebtsByClient(): Observable<Map<number, number>> {
         return of(new Map<number, number>()); // Retourne un Map vide en cas d'erreur
       })
     );
+  }*/
+
+
+// Méthode pour récupérer les dettes par client
+  getDebtsByClient(): Observable<ClientDebt[]> {
+    return this.http.get<ClientDebt[]>(`${this.baseURL}/debts-by-client`).pipe(
+      catchError(error => {
+        console.error('Erreur lors de la récupération des dettes par client:', error);
+        return of([]);
+      })
+    );
   }
+
 
   getTotalClients(): Observable<number> {
     return this.http.get<number>(`${this.baseURL}/total`).pipe(

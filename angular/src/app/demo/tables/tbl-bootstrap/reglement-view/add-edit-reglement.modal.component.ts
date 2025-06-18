@@ -54,60 +54,60 @@ export class AddEditReglementModalComponent {
       this.selectedFactureTotal = facture.total || 0;
       this.originalDeviseId = facture.deviseId || 0;
       this.reglement.deviseId = facture.deviseId || 0;
-      this.originalMontantRestant = facture.resteAPayer ?? facture.total ?? 0;
+      this.originalMontantRestant = facture.resteAPayer !== undefined && facture.resteAPayer !== null ? facture.resteAPayer : (facture.total || 0);
+      if (this.originalMontantRestant <= 0) {
+        console.warn('Facture sélectionnée a un montant restant <= 0:', facture);
+      }
       this.calculateMontant();
       this.updateMontantRestant();
     }
   }
 
-calculateMontant(): void {
-  if (this.reglement.factureId > 0 && this.selectedFactureTotal > 0 && this.reglement.deviseId > 0) {
-    const originalDevise = this.devises.find(d => d.id === this.originalDeviseId);
-    const targetDevise = this.devises.find(d => d.id === this.reglement.deviseId);
-    if (originalDevise && targetDevise && originalDevise.tauxChange && targetDevise.tauxChange) {
-      const tauxConversion = targetDevise.tauxChange; // Should be 3.39 for EUR
-      let calculatedMontant = this.reglement.montant * tauxConversion;
-      // Round to 2 decimal places
-      this.montantConvertiDT = Math.round(calculatedMontant * 100) / 100;
-      // Force to originalMontantRestant if within 0.01 DT tolerance and covers the total
-      if (Math.abs(this.montantConvertiDT - this.originalMontantRestant) <= 0.01 && this.montantConvertiDT >= this.originalMontantRestant) {
-        this.montantConvertiDT = this.originalMontantRestant;
+  calculateMontant(): void {
+    if (this.reglement.factureId > 0 && this.selectedFactureTotal > 0 && this.reglement.deviseId > 0) {
+      const originalDevise = this.devises.find(d => d.id === this.originalDeviseId);
+      const targetDevise = this.devises.find(d => d.id === this.reglement.deviseId);
+      if (originalDevise && targetDevise && originalDevise.tauxChange && targetDevise.tauxChange) {
+        const tauxConversion = targetDevise.tauxChange / (originalDevise.tauxChange || 1);
+        let calculatedMontant = this.reglement.montant * tauxConversion;
+        this.montantConvertiDT = Math.round(calculatedMontant * 100) / 100;
+        if (Math.abs(this.montantConvertiDT - this.originalMontantRestant) <= 0.01 && this.montantConvertiDT >= this.originalMontantRestant) {
+          this.montantConvertiDT = this.originalMontantRestant;
+        }
+      } else {
+        this.montantConvertiDT = this.reglement.montant;
+        console.warn('No valid tauxChange, using raw montant:', this.reglement.montant);
       }
       console.log('calculateMontant Debug:', {
         reglementMontant: this.reglement.montant,
-        targetDeviseTauxChange: targetDevise.tauxChange,
-        calculatedMontant,
-        montantConvertiDT: this.montantConvertiDT
+        originalDeviseTaux: originalDevise?.tauxChange || 'N/A',
+        targetDeviseTaux: targetDevise?.tauxChange || 'N/A',
+        calculatedMontant: this.montantConvertiDT
       });
       this.updateMontantRestant();
-    } else {
-      this.montantConvertiDT = this.reglement.montant;
-      console.warn('No conversion applied, using raw montant');
     }
   }
-}
-updateMontantRestant(): void {
-  const facture = this.factures.find(f => f.id === this.reglement.factureId);
-  if (facture && this.montantConvertiDT > 0) {
-    const currentMontantRestant = facture.resteAPayer ?? facture.total ?? 0;
-    const nouveauMontantRestant = currentMontantRestant - this.montantConvertiDT;
-    // Force resteAPayer to 0 if payment matches or exceeds the original amount
-    if (this.montantConvertiDT >= this.originalMontantRestant) {
-      facture.resteAPayer = 0;
-    } else {
-      facture.resteAPayer = Math.max(0, Math.round(nouveauMontantRestant * 100) / 100);
+
+  updateMontantRestant(): void {
+    const facture = this.factures.find(f => f.id === this.reglement.factureId);
+    if (facture && this.montantConvertiDT > 0) {
+      const currentMontantRestant = facture.resteAPayer ?? facture.total ?? 0;
+      const nouveauMontantRestant = currentMontantRestant - this.montantConvertiDT;
+      if (this.montantConvertiDT >= this.originalMontantRestant) {
+        facture.resteAPayer = 0;
+      } else {
+        facture.resteAPayer = Math.max(0, Math.round(nouveauMontantRestant * 100) / 100);
+      }
+      console.log('updateMontantRestant Debug:', {
+        currentMontantRestant,
+        montantConvertiDT: this.montantConvertiDT,
+        originalMontantRestant: this.originalMontantRestant,
+        nouveauMontantRestant,
+        updatedResteAPayer: facture.resteAPayer
+      });
+      this.updateStatutFacture(facture);
     }
-    console.log('updateMontantRestant Debug:', {
-      currentMontantRestant,
-      montantConvertiDT: this.montantConvertiDT,
-      originalMontantRestant: this.originalMontantRestant,
-      nouveauMontantRestant,
-      updatedResteAPayer: facture.resteAPayer
-    });
-    this.updateStatutFacture(facture);
   }
-}
-  
 
   updateStatutFacture(facture: Facture): void {
     const montantRestant = facture.resteAPayer ?? facture.total ?? 0;
@@ -124,7 +124,7 @@ updateMontantRestant(): void {
 
   isFormValid(): boolean {
     const facture = this.factures.find(f => f.id === this.reglement.factureId);
-    const montantConvertiDT = this.montantConvertiDT || 0;
+    const montantConvertiDT = this.montantConvertiDT || this.reglement.montant; // Fallback si conversion échoue
 
     console.log('isFormValid Debug:', {
       facture,
@@ -133,11 +133,12 @@ updateMontantRestant(): void {
       reglement: this.reglement
     });
 
+    // Si originalMontantRestant est 0, vérifier si la facture est déjà réglée et ajuster la validation
     const isValid = this.reglement.montant > 0 &&
                     this.reglement.factureId > 0 &&
                     this.reglement.modePaiement != null &&
                     this.reglement.deviseId > 0 &&
-                    montantConvertiDT <= this.originalMontantRestant &&
+                    (this.originalMontantRestant > 0 ? montantConvertiDT <= this.originalMontantRestant : true) && // Désactiver la limite si déjà réglé
                     montantConvertiDT > 0;
 
     console.log('isValid:', isValid);

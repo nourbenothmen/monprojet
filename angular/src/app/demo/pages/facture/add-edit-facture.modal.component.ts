@@ -23,6 +23,7 @@ export class AddEditFactureModalComponent {
     factureLignes: [],
     status: FactureStatus.NON_REGLE,
     total: 0,
+    resteAPayer: 0, // Ajouté pour correspondre à l'entité backend
     deviseId: 0
   };
   @Input() clients: Client[] = [];
@@ -39,13 +40,13 @@ export class AddEditFactureModalComponent {
     return this.clients.length > 0 && this.produits.length > 0 && this.devises.length > 0;
   }
 
-constructor(public activeModal: NgbActiveModal) {
-  console.log('Initialisation du composant');
-  console.log('Clients disponibles:', this.clients);
-  console.log('Produits des lignes:', this.produits);
-  console.log('Devises disponibles:', this.devises);
-  console.log('Facture initiale reçue:', { ...this.facture }); // Deep copy to avoid circular reference
-}
+  constructor(public activeModal: NgbActiveModal) {
+    console.log('Initialisation du composant');
+    console.log('Clients disponibles:', this.clients);
+    console.log('Produits des lignes:', this.produits);
+    console.log('Devises disponibles:', this.devises);
+    console.log('Facture initiale reçue:', { ...this.facture });
+  }
 
   get formattedDate(): string {
     if (!this.facture.dateFacture) return '';
@@ -83,7 +84,7 @@ constructor(public activeModal: NgbActiveModal) {
           price: produit.price
         };
         console.log('Nouvelle ligne créée:', ligne);
-        this.facture.factureLignes = [...this.facture.factureLignes, ligne];
+        this.facture.factureLignes.push(ligne); // Utiliser push au lieu de spread
         console.log('Liste des lignes après ajout:', this.facture.factureLignes);
         this.resetNewLigne();
         console.log('newLigne après reset:', this.newLigne);
@@ -97,8 +98,8 @@ constructor(public activeModal: NgbActiveModal) {
   }
 
   removeLigne(index: number): void {
-    this.facture.factureLignes.splice(index, 1);
-    this.facture.factureLignes = [...this.facture.factureLignes];
+    this.facture.factureLignes.splice(index, 1); // Utiliser splice directement
+    console.log('Liste des lignes après suppression:', this.facture.factureLignes);
   }
 
   getProduitName(produitId: number): string {
@@ -122,7 +123,7 @@ constructor(public activeModal: NgbActiveModal) {
            this.facture.factureLignes.length > 0 &&
            this.facture.deviseId > 0;
   }
-/*
+
   save(): void {
     if (this.isFormValid()) {
       this.facture.factureLignes.forEach(ligne => {
@@ -132,43 +133,19 @@ constructor(public activeModal: NgbActiveModal) {
         }
       });
       this.facture.total = this.calculateTotal();
-      // Ensure montantRestant is set to total for new facture
       if (!this.isEdit) {
-        console.log('Setting montantRestant for new facture:', this.facture.total);
-        this.facture.montantRestant = this.facture.total; // Force set for new facture
-      } else if (this.facture.montantRestant === undefined || this.facture.montantRestant === null) {
-        console.log('Setting montantRestant for edit case:', this.facture.total);
-        this.facture.montantRestant = this.facture.total; // Handle undefined/null for edits
+        console.log('Setting resteAPayer for new facture:', this.facture.total);
+        this.facture.resteAPayer = this.facture.total;
+      } else if (this.facture.resteAPayer === undefined || this.facture.resteAPayer === null) {
+        console.log('Setting resteAPayer for edit case:', this.facture.total);
+        this.facture.resteAPayer = this.facture.total;
       }
       console.log('Envoi au serveur:', this.facture);
       this.activeModal.close(this.facture);
     } else {
       console.warn('Formulaire invalide');
     }
-  }*/
- save(): void {
-  if (this.isFormValid()) {
-    this.facture.factureLignes.forEach(ligne => {
-      const produit = this.produits.find(p => p.id === ligne.produitID);
-      if (produit) {
-        ligne.price = produit.price;
-      }
-    });
-    this.facture.total = this.calculateTotal();
-    if (!this.isEdit) {
-      console.log('Setting montantRestant for new facture:', this.facture.total);
-      this.facture.resteAPayer = this.facture.total; // This should now take effect
-    } else if (this.facture.resteAPayer === undefined || this.facture.resteAPayer === null) {
-      console.log('Setting montantRestant for edit case:', this.facture.total);
-      this.facture.resteAPayer = this.facture.total;
-    }
-    console.log('Envoi au serveur:', this.facture);
-    this.activeModal.close(this.facture);
-  } else {
-    console.warn('Formulaire invalide');
   }
-}
-
 
   updateLigne(index: number): void {
     const ligne = this.facture.factureLignes[index];
@@ -179,7 +156,7 @@ constructor(public activeModal: NgbActiveModal) {
     if (produit) {
       ligne.price = produit.price;
     }
-    this.facture.factureLignes = [...this.facture.factureLignes];
+    // Pas besoin de recréer la collection ici
     console.log('Ligne mise à jour:', {
       ...ligne,
       total: this.getProduitPrice(ligne.produitID) * ligne.quantity

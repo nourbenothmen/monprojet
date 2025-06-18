@@ -1,55 +1,41 @@
-<div class="row">
-  <div class="col-xl-12">
-    <app-card cardTitle="Liste des clients" [options]="false" blockClass="table-border-style">
-
-      <div class="mb-3">
-        <button class="btn btn-primary" (click)="openAddModal()">
-          <i class="fa fa-plus"></i> Ajouter un client
-        </button>
-      </div>
-
-      <div class="table-responsive">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Nom</th>
-              <th>Email</th>
-              <th>Adresse</th>
-              <th>Téléphone</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let client of clients; trackBy: trackByClientId">
-              <td>{{ client.id }}</td>
-              <td>{{ client.name }}</td>
-              <td>{{ client.email }}</td>
-              <td>{{ client.adresse }}</td>
-              <td>{{ client.telephone }}</td>
-              <td>
-                <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditModal(client)">
-                  <i class="fa fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(client.id)">
-                  <i class="fa fa-trash"></i>
-                </button>
-              </td>
-            </tr>
-            <tr *ngIf="clients.length === 0">
-              <td colspan="6" class="text-center">Aucun client trouvé</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-    </app-card>
+<div class="card">
+  <div class="card-header">
+    <h4 class="card-title">Liste des Clients</h4>
+    <button class="btn btn-primary" (click)="openAddModal()">Ajouter Client</button>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Adresse</th>
+            <th>Téléphone</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let client of clients; trackBy: trackByClientId">
+            <td>{{ client.id }}</td>
+            <td>{{ client.name }}</td>
+            <td>{{ client.email }}</td>
+            <td>{{ client.adresse }}</td>
+            <td>{{ client.telephone }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditModal(client)">
+                <i class="fa fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(client.id ?? undefined)">
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
-<app-add-edit-client-modal
-  *ngIf="showModal"
-  [client]="selectedClient"
-  [isEdit]="isEditMode"
-  (save)="handleSave($event)"
-  (close)="closeModal()">
-</app-add-edit-client-modal>
+
+<!-- Le modal est maintenant géré par NgbModal.open(), pas besoin de <app-add-edit-client-modal> dans le template -->

@@ -243,10 +243,10 @@
   optionalDependencies:
     lmdb "3.2.6"
 
-"@angular/cdk@19.2.17":
-  version "19.2.17"
-  resolved "https://registry.npmjs.org/@angular/cdk/-/cdk-19.2.17.tgz"
-  integrity sha512-3jG33S+5+kqymCRwQlcSEWlY5rYwkKxe0onln+NXxT0/kteR02vWvv1+Li4/QqSr5JvsGHEhAFsZaR9QtOzbdA==
+"@angular/cdk@^20.0.0-next.8":
+  version "20.0.0-next.8"
+  resolved "https://registry.npmjs.org/@angular/cdk/-/cdk-20.0.0-next.8.tgz"
+  integrity sha512-QDI5TOdnfzBXrhbmv68NV0PqqikpEDHaiVkt742XB3XY9MjgVNH0D9fdQucn+vzfEhWs9lABuxXY/IBdI7iqaQ==
   dependencies:
     parse5 "^7.1.2"
     tslib "^2.3.0"
@@ -324,6 +324,13 @@
     "@types/babel__core" "7.20.5"
     tinyglobby "^0.2.12"
     yargs "^17.2.1"
+
+"@angular/material@^20.0.0-next.8":
+  version "20.0.0-next.8"
+  resolved "https://registry.npmjs.org/@angular/material/-/material-20.0.0-next.8.tgz"
+  integrity sha512-KNUTlYILituqHptwgWn7YVzWJ26LybJF48XfJKEb2EhMIyz1Hkw9LkE8AZTvspCqaX3nJSqURcN5vmeXfWy9tw==
+  dependencies:
+    tslib "^2.3.0"
 
 "@angular/platform-browser-dynamic@20.0.0-next.8":
   version "20.0.0-next.8"
@@ -5030,7 +5037,7 @@ ng-apexcharts@1.15.0:
   dependencies:
     tslib "^2.0.0"
 
-ngx-scrollbar@18.0.0:
+ngx-scrollbar@^18.0.0:
   version "18.0.0"
   resolved "https://registry.npmjs.org/ngx-scrollbar/-/ngx-scrollbar-18.0.0.tgz"
   integrity sha512-+ykmY491x+nzXvnecJvZHvDz0YWuX1r7SYMxNG4RVHXm5Z68P/8kd/3ryLD6DXdNWmJawd4NGvqq2ZkUKb/g3A==

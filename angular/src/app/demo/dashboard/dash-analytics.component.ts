@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FactureService, ClientLoyalty } from 'src/app/demo/services/facture.service';
+import { FactureService, ClientLoyalty ,ClientDebt} from 'src/app/demo/services/facture.service';
 import { FactureStatus } from 'src/app/models/facture.modal';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -18,6 +18,8 @@ import { Produit } from 'src/app/models/produit.modal';
   templateUrl: './dash-analytics.component.html',
   styleUrls: ['./dash-analytics.component.scss']
 })
+
+
 export class DashAnalyticsComponent implements OnInit {
   cards = [
     {
@@ -147,9 +149,10 @@ export class DashAnalyticsComponent implements OnInit {
   outOfStockProducts: Produit[] = [];
   isLoadingOutOfStock = false;
   totalRemainingAmount: number = 0; // Nouvelle propriété pour le reste global
-  debtsByClient: Map<number, number> = new Map<number, number>(); // Nouvelle propriété
+  //debtsByClient: Map<number, number> = new Map<number, number>(); // Nouvelle propriété
   totalClients: number = 0; // Nouveau total des clients
   totalProduits: number = 0; // Nouveau total des produits
+  debtsByClient: ClientDebt[] = [];
 
 
 
@@ -309,7 +312,7 @@ loadTotalRemainingAmount(): void {
   onProductLimitChange(): void {
     this.loadMostRequestedProducts();
   }
-
+/*
 // Nouvelle méthode pour charger les dettes par client
   loadDebtsByClient(): void {
     this.factureService.getDebtsByClient().subscribe({
@@ -322,7 +325,20 @@ loadTotalRemainingAmount(): void {
         this.debtsByClient = new Map<number, number>(); // Map vide en cas d'erreur
       }
     });
-  }
+  }*/
+
+ loadDebtsByClient(): void {
+  this.factureService.getDebtsByClient().subscribe({
+    next: (debts: ClientDebt[]) => {
+      this.debtsByClient = debts;
+      console.log('Dettes par client:', debts);
+    },
+    error: (err: any) => {
+      console.error('Erreur lors du chargement des dettes par client:', err);
+      this.debtsByClient = [];
+    }
+  });
+}   
 
   // Nouvelle méthode pour charger les totaux
   loadTotals(): void {

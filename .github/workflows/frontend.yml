@@ -1,0 +1,33 @@
+name: Frontend Angular CI
+
+on:
+  push:
+    branches: [ master ]  # ou 'main' selon ta branche
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd angular
+          npm install
+
+      - name: Run Angular tests
+        run: |
+          cd angular
+          npm run test -- --watch=false --browsers=ChromeHeadless
+
+      - name: Build Angular app
+        run: |
+          cd angular
+          npm run build -- --configuration=production

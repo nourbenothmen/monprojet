@@ -5,20 +5,18 @@ import { ClientService } from '../../../services/client.service';
 import { Client } from '../../../../models/client.modal';
 import { CardComponent } from 'src/app/theme/shared/components/card/card.component';
 import { AddEditClientModalComponent } from './add-edit-client.modal.component';
+import { NgbModule, NgbModal } from '@ng-bootstrap/ng-bootstrap'; // Importer NgbModal
 
 @Component({
   selector: 'app-clients',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardComponent, AddEditClientModalComponent],
+  imports: [CommonModule, FormsModule, CardComponent, AddEditClientModalComponent, NgbModule],
   templateUrl: './client-table.component.html'
 })
 export class ClientsComponent implements OnInit {
   clients: Client[] = [];
-  showModal: boolean = false;
-  isEditMode: boolean = false;
-  selectedClient: Client = { name: '', email: '', adresse: '', telephone: '' };
 
-  constructor(private clientService: ClientService) {}
+  constructor(private clientService: ClientService, private modalService: NgbModal) {}
 
   ngOnInit(): void {
     this.loadClients();
@@ -29,37 +27,36 @@ export class ClientsComponent implements OnInit {
   }
 
   openAddModal(): void {
-    this.isEditMode = false;
-    this.selectedClient = { name: '', email: '', adresse: '', telephone: '' };
-    this.showModal = true;
+    const modalRef = this.modalService.open(AddEditClientModalComponent);
+    modalRef.componentInstance.isEdit = false;
+    modalRef.componentInstance.client = { name: '', email: '', adresse: '', telephone: '' };
+    modalRef.result.then(
+      (result: Client) => {
+        // Modal fermé avec succès (après sauvegarde)
+        this.loadClients(); // Recharger la liste
+      },
+      (reason) => {
+        console.log('Modal fermé', reason);
+      }
+    );
   }
 
   openEditModal(client: Client): void {
-    this.isEditMode = true;
-    this.clientService.getClientById(client.id!).subscribe({
-      next: (fetchedClient) => {
-        this.selectedClient = { ...fetchedClient };
-        this.showModal = true;
+    const modalRef = this.modalService.open(AddEditClientModalComponent);
+    modalRef.componentInstance.isEdit = true;
+    modalRef.componentInstance.client = { ...client }; // Passer une copie
+    modalRef.result.then(
+      (result: Client) => {
+        this.loadClients(); // Recharger la liste après modification
       },
-      error: (err) => {
-        console.error("Erreur lors du chargement du client:", err);
+      (reason) => {
+        console.log('Modal fermé', reason);
       }
-    });
+    );
   }
 
-  handleSave(client: Client): void {
-    if (this.isEditMode) {
-      const index = this.clients.findIndex(c => c.id === client.id);
-      if (index !== -1) this.clients[index] = client;
-    } else {
-      this.clients.push(client);
-    }
-    this.closeModal();
-  }
-
-  closeModal(): void {
-    this.showModal = false;
-  }
+  // handleSave n'est plus nécessaire, car la logique est dans le modal
+  // closeModal n'est plus nécessaire, car géré par NgbModal
 
   confirmDelete(id?: number): void {
     if (id && confirm("Voulez-vous vraiment supprimer ce client ?")) {

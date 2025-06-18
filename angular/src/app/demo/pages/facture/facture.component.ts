@@ -273,6 +273,7 @@ calculateMontantRestant(factureId: number | undefined, reglements: Reglement[]):
         return 'other';
     }
   }
+  
 
 
 }

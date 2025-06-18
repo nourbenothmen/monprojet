@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './src/app/app.component';
 import { FactureComponent } from './src/app/demo/pages/facture/facture.component';
@@ -15,6 +14,7 @@ import { GuestComponent } from '../angular/src/app/theme/layout/guest/guest.comp
 // AuthModule que tu viens de créer
 import { AuthModule } from '../angular/src/app/demo/pages/authentication/auth.module';
 
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -25,6 +25,7 @@ import { AuthModule } from '../angular/src/app/demo/pages/authentication/auth.mo
     CardComponent,
     AdminComponent,
     GuestComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -32,7 +33,7 @@ import { AuthModule } from '../angular/src/app/demo/pages/authentication/auth.mo
     CommonModule,
     NgbModule,
     HttpClientModule,
-    AuthModule 
+    AuthModule
   ],
   bootstrap: [AppComponent]
 })

@@ -37,7 +37,6 @@ export class ReglementTableComponent implements OnInit {
   ngOnInit(): void {
     this.loadData();
   }
-  
 
   loadData(): void {
     forkJoin({
@@ -48,11 +47,14 @@ export class ReglementTableComponent implements OnInit {
       next: ({ reglements, factures, devises }) => {
         this.reglements = reglements;
         this.filteredReglements = reglements;
-        this.factures = factures;
+        this.factures = factures.map(f => ({
+          ...f,
+          resteAPayer: f.resteAPayer ?? f.total ?? 0 // Assurer une valeur par défaut
+        })); // Ajouter une vérification pour resteAPayer
         this.devises = devises;
         this.isDataLoaded = true;
         console.log('Règlements chargés:', reglements);
-        console.log('Factures chargées:', factures);
+        console.log('Factures chargées (avec resteAPayer):', this.factures);
         console.log('Devises chargées:', devises);
       },
       error: (error) => {

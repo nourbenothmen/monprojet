@@ -209,33 +209,36 @@
     </app-card>
   </div>
   <!-- Tableau des dettes par client -->
-  <div class="col-xl-12">
-    
-    <app-card cardTitle="Dettes par Client" [options]="false" blockClass="table-border-style">
-      <i class='fas fa-bell icon-custom me-2' style='color: #f44336;'></i>
-      <div class="table-responsive">
-        <table class="table table-styling">
-          <thead>
-            <tr class="table-primary">
-              <th>#</th>
-              <th>ID Client</th>
-              <th>Dette Totale (DT)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let debt of debtsByClient | keyvalue; let i = index">
-              <th scope="row">{{ i + 1 }}</th>
-              <td>{{ debt.key }}</td>
-              <td>{{ debt.value }}</td>
-            </tr>
-            <tr *ngIf="debtsByClient.size === 0">
-              <td colspan="3" class="text-center">Aucune dette trouvée.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </app-card>
-  </div>
+<div class="col-xl-12">
+  <app-card cardTitle="Dettes par Client" [options]="false" blockClass="table-border-style">
+    <i class='fas fa-bell icon-custom me-2' style='color: #f44336;'></i>
+    <div class="table-responsive">
+      <table class="table table-styling">
+        <thead>
+          <tr class="table-primary">
+            <th>ID Client</th>
+            <th>Nom Client</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+            <th>Dette Totale (DT)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let debt of debtsByClient; let i = index">
+            <td>{{ debt.clientId }}</td>
+            <td>{{ debt.name }}</td>
+            <td>{{ debt.email }}</td>
+            <td>{{ debt.telephone }}</td>
+            <td>{{ debt.debtAmount }}</td>
+          </tr>
+          <tr *ngIf="debtsByClient.length === 0">
+            <td colspan="6" class="text-center">Aucune dette trouvée.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </app-card>
+</div>
 
   <div class="col-xl-12">
     <app-card cardTitle="Produits en Rupture de Stock" [options]="false" blockClass="table-border-style">

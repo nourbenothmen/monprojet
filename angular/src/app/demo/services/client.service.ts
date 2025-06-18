@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Client } from '../../models/client.modal';
 
 @Injectable({
@@ -30,10 +30,15 @@ export class ClientService {
     return this.http.post<Client>(this.apiUrl, client);
   }
 
-  updateClient(p0: number, client: Client): Observable<Client> {
+  /*updateClient(p0: number, client: Client): Observable<Client> {
     return this.http.put<Client>(`${this.apiUrl}/${client.id}`, client);
-  }
-
+  }*/
+updateClient(id: number, client: Client) {
+  console.log('Données envoyées au backend :', client); // Avant l'appel HTTP
+  return this.http.put<Client>(`http://localhost:8084/api/clients/${id}`, client).pipe(
+    tap((response: Client) => console.log('Réponse du backend :', response))
+  );
+}
   deleteClient(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
