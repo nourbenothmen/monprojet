@@ -23,6 +23,9 @@ jobs:
         run: |
           cd angular
           npm install --legacy-peer-deps
+          npm install jwt-decode --save
+          npm install --save-dev @types/jwt-decode
+
 
       - name: Build Angular App
         run: |
