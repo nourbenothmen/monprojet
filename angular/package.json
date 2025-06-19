@@ -26,7 +26,6 @@
     "@angular/platform-browser": "20.0.0-next.8",
     "@angular/platform-browser-dynamic": "20.0.0-next.8",
     "@angular/router": "20.0.0-next.8",
-    "@ng-bootstrap/ng-bootstrap": "18.0.0",
     "@popperjs/core": "2.11.8",
     "apexcharts": "4.7.0",
     "bootstrap": "5.3.6",
