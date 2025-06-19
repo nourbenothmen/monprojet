@@ -30,6 +30,15 @@ jobs:
           cd angular
           npm run build -- --configuration production
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: angular-dist
+          path: angular/dist
+
+
+
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
